@@ -83,7 +83,7 @@ def build_model(sie_cam=True, cam_num=None, is_train=False, num_vids=None, s=30.
     reid_model = build_reid_model(
         num_classes=1000, cam_num=8, view_num=1, backbone_cfg=backbone_cfg, head_cfg=head_cfg
     )
-    load_pretrained(model, pretrained="./weight/VehicleID_clipreid_12x12sie_ViT-B-16_60.pt")
+    load_pretrained(reid_model, pretrained="./weight/VehicleID_clipreid_12x12sie_ViT-B-16_60.pt")
     backbone = reid_model.backbone.image_encoder
     if is_train:
         model = ViTModel(

@@ -24,7 +24,7 @@ def main():
         config = yaml.safe_load(f)
 
     df_train = pd.read_csv(args.train_csv)
-    df_query = pd.read_csv(args.guery_csv)
+    df_query = pd.read_csv(args.query_csv)
     df_gallery = pd.read_csv(args.gallery_csv)
 
     df_val = pd.concat([df_query, df_gallery], axis=0, ignore_index=True)
@@ -59,7 +59,7 @@ def main():
 
     model = build_model(
         sie_cam=True, cam_num=config["CAM_NUM"], 
-        s=config["ARCFACE_RADIUS"], m=config["ARCFACE_MARGIN"], 
+        s=config["TRAIN"]["ARCFACE_RADIUS"], m=config["TRAIN"]["ARCFACE_MARGIN"], 
         num_vids=num_train_vehicle_ids, is_train=True
     ).to(args.device)
     logger.info("Build model successfully")
@@ -69,7 +69,7 @@ def main():
     optimizer = build_optimizer(
         model, base_lr=config["TRAIN"]["BASE_LR"], 
         weight_decay=config["TRAIN"]["WEIGHT_DECAY"], 
-        bias_lr_factor=config["TRAIN"]["BASE_LR_FACTOR"],
+        bias_lr_factor=config["TRAIN"]["BIAS_LR_FACTOR"],
         weight_decay_bias=config["TRAIN"]["WEIGHT_DECAY_BIAS"], 
         fc_lr_factor=config["TRAIN"]["FC_LR_FACTOR"]
     )
