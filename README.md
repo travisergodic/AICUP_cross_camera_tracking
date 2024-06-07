@@ -90,7 +90,7 @@
                    --data data/custom.yaml \
                    --img 640 640 \
                    --cfg cfg/training/yolov7.yaml \
-                   --weights /content/yolov7/weights/yolov7x.pt \
+                   --weights ../weights/yolov7x.pt \
                    --name yolov7 \
                    --hyp data/hyp.scratch.p5.yaml \
                    --epochs 20
