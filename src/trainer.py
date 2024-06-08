@@ -10,7 +10,6 @@ from timm.utils import AverageMeter
 import sklearn.metrics.pairwise
 
 logger=logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def train_one_epoch(model, optimizer, loss_fn, loader, device, scaler):
@@ -120,10 +119,10 @@ def train(model, optimizer, loss_fn, train_loader, val_loader, num_query, metric
     for epoch in range(num_epoch):
         scaler = torch.cuda.amp.GradScaler()
         avg_loss = train_one_epoch(model, optimizer, loss_fn, train_loader, device, scaler)
-        print(f"Epoch [{epoch+1}/{num_epoch}] loss: {avg_loss}")
+        logger.info(f"Epoch [{epoch+1}/{num_epoch}] loss: {avg_loss}")
         if (epoch + 1) % eval_freq == 0:
             # cross camera
-            score_dict = eval_model(model, val_loader, normalize=False, num_query=num_query, metric=metric, max_rank=max_rank)
+            score_dict = eval_model(model, val_loader, normalize=False, num_query=num_query, metric=metric, max_rank=max_rank, device=device)
             cmc = score_dict["cc_CMC"]
             map = score_dict["cc_mAP"]
             logger.info("--------- cross camera ---------")

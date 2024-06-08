@@ -39,7 +39,6 @@ class TrainTransform:
             return self.random_erase(img)
 
 
-
 class TestTransform:
     def __init__(self, mean, std, size):
         self.transform = T.Compose(
@@ -51,4 +50,4 @@ class TestTransform:
         )
 
     def __call__(self, img):
-        self.transform(img)
+        return self.transform(img)

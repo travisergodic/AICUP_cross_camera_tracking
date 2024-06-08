@@ -67,11 +67,11 @@ def main():
     loss_fn = nn.CrossEntropyLoss()
 
     optimizer = build_optimizer(
-        model, base_lr=config["TRAIN"]["BASE_LR"], 
-        weight_decay=config["TRAIN"]["WEIGHT_DECAY"], 
-        bias_lr_factor=config["TRAIN"]["BIAS_LR_FACTOR"],
-        weight_decay_bias=config["TRAIN"]["WEIGHT_DECAY_BIAS"], 
-        fc_lr_factor=config["TRAIN"]["FC_LR_FACTOR"]
+        model, base_lr=float(config["TRAIN"]["BASE_LR"]), 
+        weight_decay=float(config["TRAIN"]["WEIGHT_DECAY"]), 
+        bias_lr_factor=float(config["TRAIN"]["BIAS_LR_FACTOR"]),
+        weight_decay_bias=float(config["TRAIN"]["WEIGHT_DECAY_BIAS"]), 
+        fc_lr_factor=float(config["TRAIN"]["FC_LR_FACTOR"])
     )
     logger.info("Start training ...")
     trainer.train(
@@ -90,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--query_csv", type=str, required=True)
     parser.add_argument("--gallery_csv", type=str, required=True)
     parser.add_argument("--image_dir", type=str, required=True)
+    parser.add_argument("--num_epochs", type=int, default=60)
     parser.add_argument("--batch_size", type=int, default=96)
     parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("--device", type=str, default="cpu")
