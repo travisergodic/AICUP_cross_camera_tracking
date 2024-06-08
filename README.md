@@ -1,6 +1,6 @@
 # AICUP 跨相機多目標車輛追蹤競賽（模型組）
 ## 介紹
-比賽目標通過對道路車輛進行偵測，並進行跨相機車輛追蹤，並賦予車輛編號。\
+比賽目標通過對道路車輛進行偵測，並同時進行單相機、跨相機車輛追蹤，並賦予車輛編號。\
 使用 [YOLOv7](https://github.com/WongKinYiu/yolov7) 模型進行車輛偵測，[CLIP ReID](https://github.com/Syliz517/CLIP-ReID) 模型進行跨相機車輛追蹤。[比賽連結](https://tbrain.trendmicro.com.tw/Competitions/Details/33)
 
 |![alt text](assets/demo1.png)|![alt text](assets/demo2.png)|
@@ -96,7 +96,17 @@
                    --epochs 20
    ```
 
-2. **訓練車輛辨識模型**
+2. **資料前處理**：產訓練 ReID 模型所需的資料 (若已下載 `final.zip`，不需執行此步驟)。
+   ```bash
+   # Virtual Environment: reid-env
+   cd ${prjt_root}
+   python tools/preprocess.py --data_root data/train \
+                              --save_dir data/final \
+                              --margin 3 \
+                              --query_ratio 0.4
+   ```
+
+3. **訓練車輛辨識模型**
    ```bash
    # Virtual Environment: reid-env
    cd ${prjt_root}
