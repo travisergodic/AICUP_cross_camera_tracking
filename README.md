@@ -46,16 +46,16 @@
    ```plaintext
    data/
    ├── final/
-   |   ├── train.csv
-   |   ├── query.csv
-   |   ├── gallery.csv
-   |   └── images_3/
-   |       ├── 0.jpg
-   |       ├── 1.jpg
-   |       └── ...
+   │   ├── train.csv
+   │   ├── query.csv
+   │   ├── gallery.csv
+   │   └── images_3/
+   │       ├── 0.jpg
+   │       ├── 1.jpg
+   │       └── ...
    ├── train/
-   |   ├── images/
-   |   └── labels/
+   │   ├── images/
+   │   └── labels/
    └── 32_33_AI_CUP_testdataset/AI_CUP_testdata
        └── images/
    ```
@@ -83,7 +83,7 @@
 1. **訓練車輛偵測模型**
    ```bash
    # Virtual Environment: yolov7-env
-   cd yolov7
+   cd ${prjt_root}/yolov7
    python train.py --workers 8 \
                    --device 0 \
                    --batch-size 32 \
@@ -99,6 +99,7 @@
 2. **訓練車輛辨識模型**
    ```bash
    # Virtual Environment: reid-env
+   cd ${prjt_root}
    python tools/train.py --tag AICUP_ReID \
                          --config_file configs/train/v1.yaml \
                          --train_csv data/final/train.csv \
@@ -112,41 +113,45 @@
 
 
 ## 跨相機車輛匹配
-1. **測試集車輛偵測**
+1. **測試集車輛偵測**：進行車輛偵測，並產生 `data/result.csv` 記錄偵測車輛的訊息。
    ```bash
    # Virtual Environment: yolov7-env
-   cd yolov7
-   python detect.py --weights weights/yolov7x_best.pt \
-                    --source "data/32_33_AI_CUP_testdataset/AI_CUP_testdata/images/*/*.jpg" \
-                    --save_dir data \
+   cd ${prjt_root}/yolov7
+   python detect.py --weights ../weight/yolov7x_best.pt \
+                    --source "../data/32_33_AI_CUP_testdataset/AI_CUP_testdata/images/*/*.jpg" \
+                    --save_dir ../data \
                     --device 0 \
                     --conf-thres 0.2 \
                     --img-size 640 \
                     --nosave
    ```
 
-2. **儲存擷取車輛影像**
+2. **儲存擷取車輛影像**：通過 `data/result.csv` 將圖片中車輛擷取，並儲存。
    ```bash
    # Virtual Environment: reid-env
-   python tools/crop_vehicles.py --csv_path data/test_result.csv \
+   cd ${prjt_root}
+   python tools/crop_vehicles.py --csv_path data/result.csv \
                                  --save_dir data/test_images \
                                  --margin 3
    ```
 
-3. **產車輛影像的 Embedding**
+3. **產車輛影像的 Embedding**：通過訓練的模型生成車輛擷取圖像的 Embedding。
    ```bash
    # Virtual Environment: reid-env
-   python tools/make_feat.py --csv_path data/test_result.csv \
+   cd ${prjt_root}
+   python tools/make_feat.py --config_file configs/train/v1.yaml \
+                             --csv_path data/result.csv \
                              --ckpt weight/final_reid_model_e59.pt \
                              --image_dir data/test_images \
                              --save_dir data/test_feat \
                              --batch_size 128
    ```
 
-4. **車輛匹配**
+4. **車輛匹配**：通過車輛 Embedding 進行車輛匹配。
    ```bash
    # Virtual Environment: reid-env
-   python tools/assign_vid.py --csv_path data/test_result.csv \
+   cd ${prjt_root}
+   python tools/assign_vid.py --csv_path data/result.csv \
                               --feat_dir data/test_feat \
                               --save_path data/test_result.json \
                               --pre 3 \
@@ -158,6 +163,7 @@
 5. **轉換為比賽提交格式**
    ```bash
    # Virtual Environment: reid-env
+   cd ${prjt_root}
    python tools/convert_to_submit.py --csv_path data/test_result.csv \
                                     --json_path data/test_result.json \
                                     --save_dir data/submit \
