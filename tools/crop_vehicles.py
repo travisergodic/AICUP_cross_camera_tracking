@@ -25,6 +25,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--csv_path", type=str, required=True)
     parser.add_argument("--save_dir", type=str, required=True)
-    parser.add_argument("--margin", type=str, required=True)
+    parser.add_argument("--margin", type=int, required=True)
     args = parser.parse_args()
     main()

@@ -1,5 +1,5 @@
-# import torch
-# import torch.nn as nn
+import torch
+import torch.nn as nn
 
 
 # def load_pretrained_weight(model, ckpt_path, num_classes):
@@ -23,13 +23,13 @@
 #     return model
 
 
-# def load_checkpoint(model, ckpt):
-#     state_dict = torch.load(ckpt)
-#     remove_keys = []
-#     for k, _ in state_dict.items():
-#         if k.startswith("head."):
-#             remove_keys.append(k)
+def load_checkpoint(model, ckpt):
+    state_dict = torch.load(ckpt)
+    remove_keys = []
+    for k, _ in state_dict.items():
+        if k.startswith("head."):
+            remove_keys.append(k)
 
-#     for k in remove_keys:
-#         state_dict.pop(k)
-#     return model.load_state_dict(state_dict, strict=False)
+    for k in remove_keys:
+        state_dict.pop(k)
+    return model.load_state_dict(state_dict, strict=False)

@@ -1,5 +1,6 @@
 import os
 import sys
+import yaml
 import logging
 import argparse
 from pathlib import Path
@@ -11,8 +12,8 @@ import pandas as pd
 from torch.utils.data import DataLoader
 
 from src.logger_helper import setup_logger
-from src.dataset import InferenceDataset, val_transform
-from src.model import build_inference_model, load_checkpoint
+from src.data import InferenceDataset, TestTransform
+from src.model import build_model, load_checkpoint
 from src.eval import eval_model
 
 
@@ -20,12 +21,21 @@ logger = setup_logger(level=logging.INFO)
 
 
 def main():
+    with open(args.config_file, "r") as f:
+        config = yaml.safe_load(f)
+
+    val_transform = TestTransform(
+        mean=config["TRANSFORM"]["TEST"]["MEAN"],
+        std=config["TRANSFORM"]["TEST"]["STD"],
+        size=config["TRANSFORM"]["TEST"]["SIZE"],
+    )
+
     df_info = pd.read_csv(args.csv_path)
     logger.info(f"Read csv file successfully. Found {len(df_info)} of records")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    model = build_inference_model(sie_cam=args.sie_cam, cam_num=8).to(device)
+    model = build_model(sie_cam=args.sie_cam, cam_num=config["CAM_NUM"]).to(device)
     msg = load_checkpoint(model, args.ckpt)
     logger.info(f"Load day model successfully. {msg}")
 
@@ -47,6 +57,7 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
+    parser.add_argument("--config_file", type=str, required=True)
     parser.add_argument("--csv_path", type=str, required=True)
     parser.add_argument("--ckpt", type=str)
     parser.add_argument("--image_dir", type=str, required=True)
